@@ -21,7 +21,9 @@ import (
 
 dagger.#Plan & {
     actions: {
-      _postgres: postgres.#PostgresBuild
+      _postgres: postgres.#PostgresBuild & {
+        config: client.filesystem."./postgres_config".read.contents
+      }
       _readVersion: #ReadVersion & {
         dir: client.filesystem.".".read.contents
       }
@@ -58,8 +60,16 @@ dagger.#Plan & {
         DOCKER_USERNAME: string
         DOCKER_ACCESS_TOKEN: dagger.#Secret
       }
-      filesystem: '.' : {
-        read: contents: dagger.#FS
+      // filesystem: '.' : {
+      //   read: contents: dagger.#FS
+      // }
+      filesystem: {
+        '.' : {
+          read: contents: dagger.#FS
+        }
+        './postgres_config': {
+          read: contents: dagger.#FS
+        }
       }
     }
 }
