@@ -1,17 +1,23 @@
 package postgres
 
 import (
+  "dagger.io/dagger"
   "universe.dagger.io/docker"
   "fiction.dev/extension"
 )
 
 #PostgresBuild: {
+  config: dagger.#FS
   pgjwt: extension.#PullPgjwt
 
   build: docker.#Build & {
     steps: [
       docker.#Pull & {
         source: "postgres:14"
+      },
+      docker.#Copy & {
+        contents: config
+        dest: "/etc/postgresql"
       },
       docker.#Run & {
         entrypoint: []
